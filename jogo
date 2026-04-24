@@ -1,0 +1,68 @@
+import pygame
+import random
+import os
+
+pygame.init()
+
+# Tela
+largura = 600
+altura = 400
+tela = pygame.display.set_mode((largura, altura))
+pygame.display.set_caption("Rato e Queijo")
+
+# Caminho seguro (resolve erro de imagem)
+base_path = os.path.dirname(__file__)
+
+# Carregar imagens
+rato_img = pygame.image.load(os.path.join(base_path, "rato.png"))
+queijo_img = pygame.image.load(os.path.join(base_path, "queijo.png"))
+
+# Redimensionar
+rato_img = pygame.transform.scale(rato_img, (70, 100))
+queijo_img = pygame.transform.scale(queijo_img, (70, 100))
+
+# Posição inicial
+rato_x = 300
+rato_y = 200
+
+queijo_x = random.randint(0, largura - 40)
+queijo_y = random.randint(0, altura - 40)
+
+velocidade = 5
+rodando = True
+
+while rodando:
+
+    # Eventos
+    for evento in pygame.event.get():
+        if evento.type == pygame.QUIT:
+            rodando = False
+
+    # Movimento
+    teclas = pygame.key.get_pressed()
+
+    if teclas[pygame.K_LEFT]:
+        rato_x -= velocidade
+    if teclas[pygame.K_RIGHT]:
+        rato_x += velocidade
+    if teclas[pygame.K_UP]:
+        rato_y -= velocidade
+    if teclas[pygame.K_DOWN]:
+        rato_y += velocidade
+
+    # Colisão
+    rato_rect = rato_img.get_rect(topleft=(rato_x, rato_y))
+    queijo_rect = queijo_img.get_rect(topleft=(queijo_x, queijo_y))
+
+    if rato_rect.colliderect(queijo_rect):
+        queijo_x = random.randint(0, largura - 40)
+        queijo_y = random.randint(0, altura - 40)
+
+    # Desenho
+    tela.fill((255, 255, 255))
+    tela.blit(rato_img, (rato_x, rato_y))
+    tela.blit(queijo_img, (queijo_x, queijo_y))
+
+    pygame.display.update()
+
+pygame.quit()
